@@ -1,0 +1,44 @@
+name: flutter_sherpa_onnx
+description: A new flutter plugin project.
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ">=2.15.0-96.0.dev <4.0.0"
+  flutter: ">=2.5.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_ffi_asset_helper:
+    path: ../flutter_ffi_asset_helper
+  flutter_onnx: 
+    path: ../flutter_onnx
+  ffi:
+  path_provider:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+  ffigen: 
+  
+ffigen:
+  output: 'lib/generated_bindings.dart'
+  headers:
+    entry-points:
+      - 'ios/include/FlutterSherpaOnnxPluginCApi.h'
+
+
+flutter:
+  plugin:
+    platforms:
+      ios:
+        pluginClass: FlutterSherpaOnnxPlugin
+      macos:
+        pluginClass: FlutterSherpaOnnxPlugin
+      android:
+        package: app.polyvox.flutter_sherpa_onnx
+        pluginClass: FlutterSherpaOnnxPlugin
+      linux:
+        pluginClass: FlutterSherpaOnnxPlugin
