@@ -8,6 +8,6 @@
 #ifndef SwiftFlutterSherpaOnnxPlugin_BridgingHeader_h
 #define SwiftFlutterSherpaOnnxPlugin_BridgingHeader_h
 
-#import "FlutterSherpaOnnxPluginCApi.h"
+#import "c-api.h"
 
 #endif /* SwiftFlutterSherpaOnnxPlugin_BridgingHeader_h */

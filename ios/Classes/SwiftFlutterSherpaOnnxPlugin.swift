@@ -15,9 +15,6 @@ public class SwiftFlutterSherpaOnnxPlugin: NSObject, FlutterPlugin {
     let instance = SwiftFlutterSherpaOnnxPlugin(channel:channel)
     instance.registrar = registrar
     registrar.addMethodCallDelegate(instance, channel: channel)
-    // just to ensure no symbols are stripped
-    flutter_sherpa_onnx_destroy();
   }
-  
-
+    
 }

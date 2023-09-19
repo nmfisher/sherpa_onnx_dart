@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import 'package:flutter_sherpa_onnx/FlutterSherpaOnnxFFIIsolateRunner.dart';
+import 'package:flutter_sherpa_onnx/flutter_sherpa_onnx_ffi_isolate.dart';
 import 'package:path_provider/path_provider.dart';
 
 import './generated_bindings.dart';
@@ -42,6 +42,7 @@ class FlutterSherpaOnnxFFI {
       _shutdownPort = msg[3];
     });
     _resultPort.listen((result) {
+      print(result);
       _resultController.add(json.decode(result));
     });
 
@@ -72,6 +73,19 @@ class FlutterSherpaOnnxFFI {
       listener.cancel();
     });
 
+    // var dir = await getApplicationDocumentsDirectory();
+
+    // var tdata = await rootBundle.load(tokensAssetPath);
+    // File(dir.path + "/tokens.txt").writeAsBytesSync(tdata.buffer.asUint8List());
+    // var ddata = await rootBundle.load(decoderAssetPath);
+    // File(dir.path + "/decoder.onnx")
+    //     .writeAsBytesSync(ddata.buffer.asUint8List());
+    // var edata = await rootBundle.load(encoderAssetPath);
+    // File(dir.path + "/encoder.onnx")
+    //     .writeAsBytesSync(edata.buffer.asUint8List());
+    // var jdata = await rootBundle.load(joinerAssetPath);
+    // File(dir.path + "/joiner.onnx")
+    //     .writeAsBytesSync(jdata.buffer.asUint8List());
     var tokensFilePath = await _helper.getFdFromAsset(tokensAssetPath);
     var encoderFilePsath = await _helper.getFdFromAsset(encoderAssetPath);
     var decoderFilePath = await _helper.getFdFromAsset(decoderAssetPath);
@@ -79,6 +93,10 @@ class FlutterSherpaOnnxFFI {
 
     _createRecognizerPort.send([
       sampleRate,
+      // dir.path + "/tokens.txt",
+      // dir.path + "/encoder.onnx",
+      // dir.path + "/decoder.onnx",
+      // dir.path + "/joiner.onnx",
       tokensFilePath,
       encoderFilePsath,
       decoderFilePath,

@@ -24,14 +24,14 @@ extern "C" {
 
 #if defined(_WIN32)
 #if defined(SHERPA_ONNX_BUILD_SHARED_LIBS)
-#define SHERPA_ONNX_EXPORT __declspec(dllexport)
-#define SHERPA_ONNX_IMPORT __declspec(dllimport)
-#else
-#define SHERPA_ONNX_EXPORT
-#define SHERPA_ONNX_IMPORT
+#define SHERPA_ONNX_EXPORT __declspec(dllexport) __attribute__((visibility("default"))) __attribute__((used))
+#define SHERPA_ONNX_IMPORT __declspec(dllimport) __attribute__((visibility("default"))) __attribute__((used))
+#else 
+#define SHERPA_ONNX_EXPORT __attribute__((visibility("default"))) __attribute__((used))
+#define SHERPA_ONNX_IMPORT __attribute__((visibility("default"))) __attribute__((used))
 #endif
 #else  // WIN32
-#define SHERPA_ONNX_EXPORT
+#define SHERPA_ONNX_EXPORT __attribute__((visibility("default"))) __attribute__((used))
 #define SHERPA_ONNX_IMPORT SHERPA_ONNX_EXPORT
 #endif
 

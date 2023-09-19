@@ -13,8 +13,8 @@ A new flutter plugin project.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*.*', 'include/*.h', 'include/sherpa-onnx/c-api/c-api.h'
-  s.public_header_files = 'include/**/*.h'
+  s.source_files = 'Classes/**/*.*', 'include/*.h'
+  s.public_header_files = 'include/*.h'
   s.static_framework = true
   s.dependency 'Flutter'
   s.platform = :ios, '9.0'
@@ -24,14 +24,14 @@ A new flutter plugin project.
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',     
     "FRAMEWORK_SEARCH_PATHS" => '"${PODS_ROOT}/../.symlinks/plugins/flutter_onnx/ios/lib"',
     'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/include" "$(inherited)"',
-    'OTHER_LDFLAGS' => '-v -framework Accelerate -framework onnxruntime $(inherited) "-L${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib" -l:sherpa-onnx.a'
+    'OTHER_LDFLAGS' => '-v -framework Accelerate -framework onnxruntime -L${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib/ -lsherpa-onnx -force_load ${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib/libsherpa-onnx.a $(inherited)'
   }
   s.user_target_xcconfig = { 
     'DEFINES_MODULE' => 'YES', 
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',     
     "FRAMEWORK_SEARCH_PATHS" => '"${PODS_ROOT}/../.symlinks/plugins/flutter_onnx/ios/lib"',
     'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/include" "$(inherited)"',
-    'OTHER_LDFLAGS' => '-v -framework Accelerate $(inherited) -framework onnxruntime "-L${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib" -lsherpa-onnx'
+    'OTHER_LDFLAGS' => '-v -framework Accelerate $(inherited) -framework onnxruntime -L${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib -lsherpa-onnx -force_load ${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib/libsherpa-onnx.a $(inherited)'
   }
  
   s.swift_version = '5.0'
