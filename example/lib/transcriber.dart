@@ -127,9 +127,9 @@ class Transcriber {
       await plugin.createRecognizer(
           (await MicStream.sampleRate)!.toDouble(),
           "assets/asr/tokens.txt",
-          "assets/asr/encoder-epoch-12-avg-4-chunk-16-left-128.int8.ort",
-          "assets/asr/decoder-epoch-12-avg-4-chunk-16-left-128.int8.ort",
-          "assets/asr/joiner-epoch-12-avg-4-chunk-16-left-128.int8.ort");
+          "assets/asr/encoder-epoch-99-avg-1.int8.with_runtime_opt.ort",
+          "assets/asr/decoder-epoch-99-avg-1.int8.with_runtime_opt.ort",
+          "assets/asr/joiner-epoch-99-avg-1.int8.with_runtime_opt.ort");
 
       return true;
     }
