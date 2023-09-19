@@ -50,7 +50,8 @@ class FlutterSherpaOnnxFFI {
       _setupPort.sendPort,
       _createdRecognizerPort.sendPort,
       _resultPort.sendPort,
-      chunkLengthInSecs
+      chunkLengthInSecs,
+      ServicesBinding.rootIsolateToken
     ]).then((isolate) {
       _runner = isolate;
     });
@@ -100,7 +101,7 @@ class FlutterSherpaOnnxFFI {
       tokensFilePath,
       encoderFilePsath,
       decoderFilePath,
-      joinerFilePath
+      joinerFilePath,
     ]);
     var result = await completer.future;
     if (result) {

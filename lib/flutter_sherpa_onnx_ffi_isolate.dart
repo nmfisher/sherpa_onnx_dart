@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
+import 'package:path_provider/path_provider.dart';
 
 import './generated_bindings.dart';
 import 'package:flutter/services.dart';
@@ -134,7 +135,7 @@ class FlutterSherpaOnnxFFIIsolateRunner {
   int _readPointer = 0;
   int _writePointer = 0;
 
-  void _onWaveformDataReceived(dynamic data) {
+  void _onWaveformDataReceived(dynamic data) async {
     var tl = Int16List.sublistView(Uint8List.fromList(data));
 
     for (int i = 0; i < tl.length; i++) {
@@ -146,11 +147,9 @@ class FlutterSherpaOnnxFFIIsolateRunner {
       return;
     }
 
-    _lib.AcceptWaveform(
-        _stream!,
-        sampleRate!,
-        Pointer<Float>.fromAddress(_bufferPtr!.address + _readPointer),
-        _chunkLengthInSamples);
+    var floatPtr = _bufferPtr!.elementAt(_readPointer);
+
+    _lib.AcceptWaveform(_stream!, sampleRate!, floatPtr, _chunkLengthInSamples);
     while (_lib.IsOnlineStreamReady(_recognizer!, _stream!) == 1) {
       _lib.DecodeOnlineStream(_recognizer!, _stream!);
     }
@@ -198,6 +197,8 @@ class FlutterSherpaOnnxFFIIsolateRunner {
     SendPort createdRecognizerPort = args[1];
     SendPort resultPort = args[2];
     double chunkLengthInSecs = args[3];
+    BackgroundIsolateBinaryMessenger.ensureInitialized(
+        args[4] as RootIsolateToken);
     var runner = FlutterSherpaOnnxFFIIsolateRunner(
         setupPort, createdRecognizerPort, resultPort, chunkLengthInSecs);
   }
