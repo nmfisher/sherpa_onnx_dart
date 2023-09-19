@@ -27,14 +27,13 @@ ffigen:
   output: 'lib/generated_bindings.dart'
   headers:
     entry-points:
-      - 'ios/include/FlutterSherpaOnnxPluginCApi.h'
-
+      - 'ios/include/c-api.h'
 
 flutter:
   plugin:
     platforms:
       ios:
-        pluginClass: FlutterSherpaOnnxPlugin
+        pluginClass: SwiftFlutterSherpaOnnxPlugin
       macos:
         pluginClass: FlutterSherpaOnnxPlugin
       android:

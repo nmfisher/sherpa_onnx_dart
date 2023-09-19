@@ -867,45 +867,6 @@ class NativeLibrary {
   late final _SherpaOnnxVoiceActivityDetectorReset =
       _SherpaOnnxVoiceActivityDetectorResetPtr.asFunction<
           void Function(ffi.Pointer<SherpaOnnxVoiceActivityDetector>)>();
-
-  ffi.Pointer<SherpaOnnxOnlineRecognizer>
-      flutter_sherpa_onnx_create_online_recognizer(
-    ffi.Pointer<SherpaOnnxOnlineRecognizerConfig> config,
-  ) {
-    return _flutter_sherpa_onnx_create_online_recognizer(
-      config,
-    );
-  }
-
-  late final _flutter_sherpa_onnx_create_online_recognizerPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Pointer<SherpaOnnxOnlineRecognizer> Function(
-                  ffi.Pointer<SherpaOnnxOnlineRecognizerConfig>)>>(
-      'flutter_sherpa_onnx_create_online_recognizer');
-  late final _flutter_sherpa_onnx_create_online_recognizer =
-      _flutter_sherpa_onnx_create_online_recognizerPtr.asFunction<
-          ffi.Pointer<SherpaOnnxOnlineRecognizer> Function(
-              ffi.Pointer<SherpaOnnxOnlineRecognizerConfig>)>();
-
-  void flutter_sherpa_onnx_destroy(
-    ffi.Pointer<SherpaOnnxOnlineRecognizer> recognizer,
-    ffi.Pointer<SherpaOnnxOnlineStream> stream,
-  ) {
-    return _flutter_sherpa_onnx_destroy(
-      recognizer,
-      stream,
-    );
-  }
-
-  late final _flutter_sherpa_onnx_destroyPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<SherpaOnnxOnlineRecognizer>,
-                  ffi.Pointer<SherpaOnnxOnlineStream>)>>(
-      'flutter_sherpa_onnx_destroy');
-  late final _flutter_sherpa_onnx_destroy =
-      _flutter_sherpa_onnx_destroyPtr.asFunction<
-          void Function(ffi.Pointer<SherpaOnnxOnlineRecognizer>,
-              ffi.Pointer<SherpaOnnxOnlineStream>)>();
 }
 
 class __mbstate_t extends ffi.Union {
