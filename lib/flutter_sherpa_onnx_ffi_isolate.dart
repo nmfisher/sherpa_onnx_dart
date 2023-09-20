@@ -21,7 +21,8 @@ class FlutterSherpaOnnxFFIIsolateRunner {
 
   Pointer<Float>? _bufferPtr;
 
-  int _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER = 3;
+  int _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER = 10;
+  late int _bufferLen;
 
   Pointer<SherpaOnnxOnlineRecognizer>? _recognizer;
   Pointer<SherpaOnnxOnlineStream>? _stream;
@@ -105,8 +106,8 @@ class FlutterSherpaOnnxFFIIsolateRunner {
       // when the read/writer pointers hit the end of the buffer, they are reset to zero
       // as long as the multiple is large enough, this will avoid read/write under/overflow.
       // _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER is this multiple (think of it as "how many chunks can we read (pass to the decoder) or write (from the microphone) before resetting the read/write pointer to zero")
-      _bufferPtr = calloc<Float>(
-          _chunkLengthInSamples * _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER);
+      _bufferLen = _chunkLengthInSamples * _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER;
+      _bufferPtr = calloc<Float>(_bufferLen);
     }
 
     String tokensPath = args[3];
@@ -178,52 +179,32 @@ class FlutterSherpaOnnxFFIIsolateRunner {
   void _onWaveformDataReceived(dynamic data) async {
     var tl = Int16List.sublistView(Uint8List.fromList(data));
 
-    var available = _writePointer + tl.length - _readPointer;
-
-    if (_writePointer + tl.length >=
-        _chunkLengthInSamples * _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER) {
-      var diff = _writePointer -
-          (_chunkLengthInSamples * _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER);
-      diff = max(0, diff);
-      for (int i = 0; i < diff; i++) {
-        _bufferPtr!.elementAt(i).value = _bufferPtr!
-            .elementAt(
-                (_chunkLengthInSamples * _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER) +
-                    diff)
-            .value;
-      }
-      _writePointer = diff;
-    }
-
     for (int i = 0; i < tl.length; i++) {
-      _bufferPtr!.elementAt(_writePointer + i).value = tl[i] / 32768.0;
+      _bufferPtr!.elementAt((_writePointer + i) % _bufferLen).value =
+          tl[i] / 32768.0;
     }
     _writePointer += tl.length;
 
-    if (available < _chunkLengthInSamples) {
+    if (_writePointer - _readPointer < _chunkLengthInSamples) {
       return;
     }
 
-    var floatPtr = _bufferPtr!.elementAt(_readPointer);
+    var floatPtr = _bufferPtr!.elementAt(_readPointer % _bufferLen);
     _readPointer += _chunkLengthInSamples;
-    if (_readPointer ==
-        _chunkLengthInSamples * _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER) {
-      _readPointer = 0;
-    }
 
     _lib.AcceptWaveform(
         _stream!, _sampleRate!, floatPtr, _chunkLengthInSamples);
 
-    // var dir = await getExternalStorageDirectories();
-    // var outfile = File(dir![0].path + "/tmp.pcm");
+    var dir = await getExternalStorageDirectories();
+    var outfile = File(dir![0].path + "/tmp.pcm");
 
-    // var bd = ByteData.sublistView(floatPtr.asTypedList(_chunkLengthInSamples));
-    // var uint8list = Uint8List(bd.lengthInBytes);
-    // for (int i = 0; i < bd.lengthInBytes; i++) {
-    //   uint8list[i] = bd.getUint8(i);
-    // }
+    var bd = ByteData.sublistView(floatPtr.asTypedList(_chunkLengthInSamples));
+    var uint8list = Uint8List(bd.lengthInBytes);
+    for (int i = 0; i < bd.lengthInBytes; i++) {
+      uint8list[i] = bd.getUint8(i);
+    }
 
-    // outfile.writeAsBytesSync(uint8list, mode: FileMode.append);
+    outfile.writeAsBytesSync(uint8list, mode: FileMode.append);
 
     while (_lib.IsOnlineStreamReady(_recognizer!, _stream!) == 1) {
       _lib.DecodeOnlineStream(_recognizer!, _stream!);

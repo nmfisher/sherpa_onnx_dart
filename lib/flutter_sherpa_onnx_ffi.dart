@@ -76,41 +76,38 @@ class FlutterSherpaOnnxFFI {
       listener.cancel();
     });
 
-    // var tokensFilePath = await _helper.getFdFromAsset(tokensAssetPath);
-    // var encoderFilePsath = await _helper.getFdFromAsset(encoderAssetPath);
-    // var decoderFilePath = await _helper.getFdFromAsset(decoderAssetPath);
-    // var joinerFilePath = await _helper.getFdFromAsset(joinerAssetPath);
+    var tokensFilePath = await _helper.getFdFromAsset(tokensAssetPath);
+    var encoderFilePsath = await _helper.getFdFromAsset(encoderAssetPath);
+    var decoderFilePath = await _helper.getFdFromAsset(decoderAssetPath);
+    var joinerFilePath = await _helper.getFdFromAsset(joinerAssetPath);
 
     var dir = await getApplicationDocumentsDirectory();
 
-    var tdata = await rootBundle.load(tokensAssetPath);
-    File(dir.path + "/tokens.txt").writeAsBytesSync(tdata.buffer.asUint8List());
-    var ddata = await rootBundle.load(decoderAssetPath);
-    File(dir.path + "/decoder.ort")
-        .writeAsBytesSync(ddata.buffer.asUint8List());
-    var edata = await rootBundle.load(encoderAssetPath);
-    File(dir.path + "/encoder.ort")
-        .writeAsBytesSync(edata.buffer.asUint8List());
-    var jdata = await rootBundle.load(joinerAssetPath);
-    File(dir.path + "/joiner.ort").writeAsBytesSync(jdata.buffer.asUint8List());
+    // var tdata = await rootBundle.load(tokensAssetPath);
+    // File(dir.path + "/tokens.txt").writeAsBytesSync(tdata.buffer.asUint8List());
+    // var ddata = await rootBundle.load(decoderAssetPath);
+    // File(dir.path + "/decoder.ort")
+    //     .writeAsBytesSync(ddata.buffer.asUint8List());
+    // var edata = await rootBundle.load(encoderAssetPath);
+    // File(dir.path + "/encoder.ort")
+    //     .writeAsBytesSync(edata.buffer.asUint8List());
+    // var jdata = await rootBundle.load(joinerAssetPath);
+    // File(dir.path + "/joiner.ort").writeAsBytesSync(jdata.buffer.asUint8List());
 
     _createRecognizerPort.send([
       sampleRate,
       bufferSizeInBytes,
       chunkLengthInSecs,
-      dir.path + "/tokens.txt",
-      dir.path + "/encoder.ort",
-      dir.path + "/decoder.ort",
-      dir.path + "/joiner.ort",
+      tokensFilePath,
+      encoderFilePsath,
+      decoderFilePath,
+      joinerFilePath,
+      // dir.path + "/tokens.txt",
+      // dir.path + "/encoder.ort",
+      // dir.path + "/decoder.ort",
+      // dir.path + "/joiner.ort",
     ]);
 
-    // _createRecognizerPort.send([
-    //   sampleRate,
-    //   tokensFilePath,
-    //   encoderFilePsath,
-    //   decoderFilePath,
-    //   joinerFilePath,
-    // ]);
     var result = await completer.future;
     return result;
   }
