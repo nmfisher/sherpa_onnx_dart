@@ -82,25 +82,26 @@ class Transcriber {
 
     print(
         "Microphone initialized with sampleRate $sampleRate, bitDepth $bitDepth and microphoneBufferSize $microphoneBufferSize");
-    plugin = FlutterSherpaOnnxFFI(
-        chunkLengthInSecs: 0.1); // use 200ms for chunk length
+    plugin = FlutterSherpaOnnxFFI();
 
     _audioBuffer =
         AudioBuffer(sampleRate, 30); // store 30 seconds of audio in memory
     _microphone.listen(_handleMicrophoneInput);
 
     plugin.result.listen((result) {
-      bool isFinal = result.containsKey("text");
+      bool isFinal = result["is_final"] == true;
       if (isFinal) {
-        if (result["result"] != null) {
-          var words = result["result"]
+        if (result["text"].isNotEmpty) {
+          var words = result["tokens"]
               .map((r) => WordTranscription(r["word"], r["start"], r["end"]))
               .cast<WordTranscription>()
               .toList();
           _resultController.add(ASRResult(words));
         }
       } else {
-        _partialController.add(result["partial"]);
+        if (result["text"].isNotEmpty) {
+          _partialController.add(result["text"]);
+        }
       }
     });
 
@@ -126,6 +127,8 @@ class Transcriber {
     if (!Platform.isLinux) {
       await plugin.createRecognizer(
           (await MicStream.sampleRate)!.toDouble(),
+          (await MicStream.bufferSize)!,
+          0.1,
           "assets/asr/tokens.txt",
           "assets/asr/encoder-epoch-99-avg-1.int8.with_runtime_opt.ort",
           "assets/asr/decoder-epoch-99-avg-1.int8.with_runtime_opt.ort",

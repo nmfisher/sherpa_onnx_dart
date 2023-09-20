@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_sherpa_onnx_example/transcriber.dart';
 import 'dart:async';
 import 'package:just_audio/just_audio.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:mic_stream/mic_stream.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:wave_builder/wave_builder.dart';
@@ -34,11 +35,16 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      var status = await Permission.storage.request();
+      if (!status.isGranted) {
+        throw Exception("NO SDCARD PERMISSION");
+      }
+
       if (!Platform.isLinux) {
         var bitDepth = await MicStream.bitDepth;
         var sampleRate = await MicStream.sampleRate;
         print(
-            "Getting mic stream, bd is $bitDepth and sampleRate is $sampleRate");
+            "Getting mic stream, bd before listen is $bitDepth and sampleRate is $sampleRate");
         var mic = await MicStream.microphone(
             audioFormat: AudioFormat.ENCODING_PCM_16BIT,
             sampleRate: Platform.isMacOS ? 48000 : 16000);
@@ -46,12 +52,10 @@ class _MyAppState extends State<MyApp> {
         print("Got stream");
 
         var listener = mic!.listen((event) {});
+        bitDepth = await MicStream.bitDepth;
+        sampleRate = await MicStream.sampleRate;
+        print("after listen, bd is $bitDepth and sampleRate is $sampleRate");
 
-        print("LISTENED");
-        // print("Using bit depth " +
-        //     (()?.toString() ?? "") +
-        //     " and sample rate " +
-        //     (().toString()));
         _transcriber = Transcriber("assets/asr");
         await _transcriber.initialize();
 
@@ -93,6 +97,20 @@ class _MyAppState extends State<MyApp> {
                               _decoded = "";
                               _hasRecognizer = true;
                             });
+                          }
+                        : null),
+                ElevatedButton(
+                    child: const Text("Create stream (no hotwords)"),
+                    onPressed: _hasRecognizer
+                        ? () async {
+                            await _transcriber.plugin.createStream(null);
+                          }
+                        : null),
+                ElevatedButton(
+                    child: const Text("Create stream (hotwords)"),
+                    onPressed: _hasRecognizer
+                        ? () async {
+                            await _transcriber.plugin.createStream(["会 话"]);
                           }
                         : null),
                 ElevatedButton(
@@ -199,16 +217,6 @@ class _MyAppState extends State<MyApp> {
                             //       decoded?["result"] ?? decoded?["partial"];
                             // });
                             // TODO - we moved the sample project to use Transcriber rather than FlutterSherpaOnnx directly, so decodeBuffer isn't available
-                          }
-                        : null),
-                ElevatedButton(
-                    child: const Text("Set grammar to nil"),
-                    onPressed: _hasRecognizer
-                        ? () async {
-                            // await _flutterVosk.setGrammar(_hasRecognizer!);
-                            // TODO - we moved the sample project to use Transcriber rather than FlutterSherpaOnnx directly, so decodeBuffer isn't available
-
-                            setState(() {});
                           }
                         : null),
                 Text("PARTIAL: $_partial"),

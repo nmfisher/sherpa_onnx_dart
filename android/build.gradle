@@ -1,4 +1,4 @@
-group 'com.example.flutter_sherpa_onnx'
+group 'app.polyvox.flutter_sherpa_onnx'
 version '1.0-SNAPSHOT'
 
 buildscript {

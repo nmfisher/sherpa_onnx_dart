@@ -47,10 +47,17 @@ class FlutterSherpaOnnxPlugin: FlutterPlugin, MethodCallHandler {
 
     private lateinit var context: Context
 
-    companion object {
-      init {
-        
-      }
+
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+      // noop
+    }
+
+    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+      // noop
+    }
+
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+      // noop
     }
 
 

@@ -16,6 +16,7 @@ dependencies:
   path_provider:
   mic_stream:
     path: ../../mic_stream
+  permission_handler:
   just_audio: 
   cupertino_icons: ^1.0.2
   wave_builder:

@@ -76,6 +76,32 @@ class NativeLibrary {
       ffi.Pointer<SherpaOnnxOnlineStream> Function(
           ffi.Pointer<SherpaOnnxOnlineRecognizer>)>();
 
+  /// Create an online stream for accepting wave samples with the specified hot words.
+  ///
+  /// @param recognizer  A pointer returned by CreateOnlineRecognizer()
+  /// @return Return a pointer to an OnlineStream. The user has to invoke
+  /// DestroyOnlineStream() to free it to avoid memory leak.
+  ffi.Pointer<SherpaOnnxOnlineStream> CreateOnlineStreamWithHotwords(
+    ffi.Pointer<SherpaOnnxOnlineRecognizer> recognizer,
+    ffi.Pointer<ffi.Char> hotwords,
+  ) {
+    return _CreateOnlineStreamWithHotwords(
+      recognizer,
+      hotwords,
+    );
+  }
+
+  late final _CreateOnlineStreamWithHotwordsPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<SherpaOnnxOnlineStream> Function(
+              ffi.Pointer<SherpaOnnxOnlineRecognizer>,
+              ffi.Pointer<ffi.Char>)>>('CreateOnlineStreamWithHotwords');
+  late final _CreateOnlineStreamWithHotwords =
+      _CreateOnlineStreamWithHotwordsPtr.asFunction<
+          ffi.Pointer<SherpaOnnxOnlineStream> Function(
+              ffi.Pointer<SherpaOnnxOnlineRecognizer>,
+              ffi.Pointer<ffi.Char>)>();
+
   /// Destroy an online stream.
   ///
   /// @param stream A pointer returned by CreateOnlineStream()
