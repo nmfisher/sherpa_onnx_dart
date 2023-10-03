@@ -25,19 +25,10 @@ import android.content.Context
 import android.os.ParcelFileDescriptor
 import android.util.Log
 
-import com.sun.jna.Library
-import com.sun.jna.Native
-import com.sun.jna.Pointer
-import com.sun.jna.Structure
-import com.sun.jna.NativeLibrary
-import com.sun.jna.StringArray
 import android.R.attr.path
 
 /** FlutterSherpaOnnxPlugin */
 class FlutterSherpaOnnxPlugin: FlutterPlugin, MethodCallHandler {
-
-    protected val TAG: String = FlutterSherpaOnnxPlugin::class.java.getSimpleName()
-
 
     /// The MethodChannel that will the communication between Flutter and native Android
     ///

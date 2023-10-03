@@ -58,5 +58,4 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    compile 'net.java.dev.jna:jna:4.4.0@aar'
 }
