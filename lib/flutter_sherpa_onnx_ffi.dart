@@ -9,9 +9,24 @@ import 'package:flutter_ffi_asset_helper/flutter_ffi_asset_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+class WordTranscription {
+  final String word;
+  final double? start;
+  final double? end;
+
+  WordTranscription(this.word, this.start, this.end);
+}
+
+class ASRResult {
+  final bool isFinal;
+  final List<WordTranscription> words;
+
+  ASRResult(this.isFinal, this.words);
+}
+
 class FlutterSherpaOnnxFFI {
-  Stream<Map> get result => _resultController.stream;
-  final _resultController = StreamController<Map>.broadcast();
+  Stream<ASRResult> get result => _resultController.stream;
+  final _resultController = StreamController<ASRResult>.broadcast();
 
   Isolate? _runner;
 
@@ -42,8 +57,26 @@ class FlutterSherpaOnnxFFI {
       _shutdownPort = msg[4];
     });
     _resultPort.listen((result) {
+      var resultMap = json.decode(result);
+
+      bool isFinal = resultMap["is_final"] == true;
+
       print(result);
-      _resultController.add(json.decode(result));
+
+      if (isFinal) {
+        if (resultMap["text"].isNotEmpty) {
+          var words = resultMap["tokens"]
+              .map((r) => WordTranscription(r["word"], r["start"], r["end"]))
+              .cast<WordTranscription>()
+              .toList();
+          _resultController.add(ASRResult(isFinal, words));
+        }
+      } else {
+        if (resultMap["text"].isNotEmpty) {
+          _resultController.add(ASRResult(
+              isFinal, [WordTranscription(resultMap["text"], null, null)]));
+        }
+      }
     });
 
     Isolate.spawn(FlutterSherpaOnnxFFIIsolateRunner.create, [
@@ -83,17 +116,6 @@ class FlutterSherpaOnnxFFI {
 
     var dir = await getApplicationDocumentsDirectory();
 
-    // var tdata = await rootBundle.load(tokensAssetPath);
-    // File(dir.path + "/tokens.txt").writeAsBytesSync(tdata.buffer.asUint8List());
-    // var ddata = await rootBundle.load(decoderAssetPath);
-    // File(dir.path + "/decoder.ort")
-    //     .writeAsBytesSync(ddata.buffer.asUint8List());
-    // var edata = await rootBundle.load(encoderAssetPath);
-    // File(dir.path + "/encoder.ort")
-    //     .writeAsBytesSync(edata.buffer.asUint8List());
-    // var jdata = await rootBundle.load(joinerAssetPath);
-    // File(dir.path + "/joiner.ort").writeAsBytesSync(jdata.buffer.asUint8List());
-
     _createRecognizerPort.send([
       sampleRate,
       bufferSizeInBytes,
@@ -102,10 +124,6 @@ class FlutterSherpaOnnxFFI {
       encoderFilePsath,
       decoderFilePath,
       joinerFilePath,
-      // dir.path + "/tokens.txt",
-      // dir.path + "/encoder.ort",
-      // dir.path + "/decoder.ort",
-      // dir.path + "/joiner.ort",
     ]);
 
     var result = await completer.future;

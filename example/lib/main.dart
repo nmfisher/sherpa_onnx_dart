@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sherpa_onnx/flutter_sherpa_onnx_ffi.dart';
 import 'package:flutter_sherpa_onnx_example/transcriber.dart';
 import 'dart:async';
 import 'package:just_audio/just_audio.dart';
@@ -27,7 +28,6 @@ class _MyAppState extends State<MyApp> {
   bool _ready = false;
   bool _hasRecognizer = false;
   StreamSubscription<ASRResult>? _listener;
-  StreamSubscription<String>? _partialListener;
   final _results = <ASRResult>[];
   String? _partial;
   String? _decoded;
@@ -120,14 +120,18 @@ class _MyAppState extends State<MyApp> {
                             _results.clear();
                             _transcriber.listen();
                             _listener = _transcriber.result.listen((r) {
-                              _results.add(r);
-                              setState(() {
-                                _decoded = r.text;
-                              });
-                            });
-                            _partialListener = _transcriber.partial.listen((p) {
-                              _partial = p;
-                              setState(() {});
+                              if (r.isFinal) {
+                                _results.add(r);
+                                setState(() {
+                                  _decoded =
+                                      r.words.map((w) => w.word).join("");
+                                });
+                              } else {
+                                setState(() {
+                                  _partial =
+                                      r.words.map((w) => w.word).join("");
+                                });
+                              }
                             });
                           }
                         : null),
@@ -141,7 +145,7 @@ class _MyAppState extends State<MyApp> {
                                     (await getTemporaryDirectory()).path +
                                         "/test.wav");
                                 print(
-                                    "Word ${word.word} start: ${word.startTime} end: ${word.endTime}");
+                                    "Word ${word.word} start: ${word.start} end: ${word.end}");
                                 var waveBuilder = WaveBuilder(
                                     frequency:
                                         (await MicStream.sampleRate)!.toInt(),

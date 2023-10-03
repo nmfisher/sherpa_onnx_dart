@@ -8,21 +8,6 @@ import 'package:mic_stream/mic_stream.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter_sherpa_onnx/flutter_sherpa_onnx_ffi.dart';
 
-class WordTranscription {
-  final String word;
-  final double startTime;
-  final double endTime;
-
-  WordTranscription(this.word, this.startTime, this.endTime);
-}
-
-class ASRResult {
-  final List<WordTranscription> words;
-  String get text => words.map((w) => w.word).join(" ");
-
-  ASRResult(this.words);
-}
-
 class Transcriber {
   late String _modelAssetPath;
 
@@ -37,10 +22,6 @@ class Transcriber {
   final StreamController<ASRResult> _resultController =
       StreamController<ASRResult>.broadcast();
   Stream<ASRResult> get result => _resultController.stream;
-
-  final StreamController<String> _partialController =
-      StreamController<String>.broadcast();
-  Stream<String> get partial => _partialController.stream;
 
   final StreamController<bool> _isListeningController =
       StreamController<bool>.broadcast();
@@ -89,20 +70,7 @@ class Transcriber {
     _microphone.listen(_handleMicrophoneInput);
 
     plugin.result.listen((result) {
-      bool isFinal = result["is_final"] == true;
-      if (isFinal) {
-        if (result["text"].isNotEmpty) {
-          var words = result["tokens"]
-              .map((r) => WordTranscription(r["word"], r["start"], r["end"]))
-              .cast<WordTranscription>()
-              .toList();
-          _resultController.add(ASRResult(words));
-        }
-      } else {
-        if (result["text"].isNotEmpty) {
-          _partialController.add(result["text"]);
-        }
-      }
+      _resultController.add(result);
     });
 
     _initialized.complete(true);
