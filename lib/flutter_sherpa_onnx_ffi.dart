@@ -61,8 +61,6 @@ class FlutterSherpaOnnxFFI {
 
       bool isFinal = resultMap["is_final"] == true;
 
-      print(result);
-
       if (isFinal) {
         if (resultMap["text"].isNotEmpty) {
           var words = resultMap["tokens"]
@@ -93,6 +91,8 @@ class FlutterSherpaOnnxFFI {
   Future decodeBuffer() async {
     throw Exception("TODO");
   }
+
+  bool _hasRecognizer = false;
 
   Future createRecognizer(
       double sampleRate,
@@ -127,6 +127,7 @@ class FlutterSherpaOnnxFFI {
     ]);
 
     var result = await completer.future;
+    _hasRecognizer = true;
     return result;
   }
 
@@ -141,13 +142,18 @@ class FlutterSherpaOnnxFFI {
     var result = await completer.future;
     if (result) {
       _killed = false;
+    } else {
+      throw Exception("Failed to create stream. Is a recognizer available?");
     }
     return result;
   }
 
   Future destroyRecognizer() async {
-    _killRecognizerPort.send(true);
-    _killed = true;
+    if (_hasRecognizer) {
+      _killRecognizerPort.send(true);
+      _killed = true;
+    }
+    _hasRecognizer = false;
   }
 
   void acceptWaveform(Uint8List data) async {
