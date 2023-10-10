@@ -146,7 +146,7 @@ class FlutterSherpaOnnxFFIIsolateRunner {
 
     var hotwords = "";
     _config!.ref.hotwords_file = hotwords.toNativeUtf8().cast<Char>();
-    _config!.ref.hotwords_score = 1.0;
+    _config!.ref.hotwords_score = 10.0;
 
     _recognizer = _lib.CreateOnlineRecognizer(_config!);
 
@@ -154,6 +154,9 @@ class FlutterSherpaOnnxFFIIsolateRunner {
   }
 
   void _onCreateStreamCommandReceived(dynamic hotwords) {
+    if (_recognizer == null) {
+      _createdStreamPort.send(false);
+    }
     _readPointer = 0;
     _writePointer = 0;
     if (_stream != null) {
