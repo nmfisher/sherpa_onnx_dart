@@ -96,7 +96,6 @@ class FlutterSherpaOnnxFFI {
 
   Future createRecognizer(
       double sampleRate,
-      int bufferSizeInBytes,
       double chunkLengthInSecs,
       String tokensAssetPath,
       String encoderAssetPath,
@@ -109,16 +108,15 @@ class FlutterSherpaOnnxFFI {
       listener.cancel();
     });
 
-    var tokensFilePath = await _helper.getFdFromAsset(tokensAssetPath);
-    var encoderFilePsath = await _helper.getFdFromAsset(encoderAssetPath);
-    var decoderFilePath = await _helper.getFdFromAsset(decoderAssetPath);
-    var joinerFilePath = await _helper.getFdFromAsset(joinerAssetPath);
+    var tokensFilePath = await _helper.assetToFilepath(tokensAssetPath);
+    var encoderFilePsath = await _helper.assetToFilepath(encoderAssetPath);
+    var decoderFilePath = await _helper.assetToFilepath(decoderAssetPath);
+    var joinerFilePath = await _helper.assetToFilepath(joinerAssetPath);
 
     var dir = await getApplicationDocumentsDirectory();
 
     _createRecognizerPort.send([
       sampleRate,
-      bufferSizeInBytes,
       chunkLengthInSecs,
       tokensFilePath,
       encoderFilePsath,

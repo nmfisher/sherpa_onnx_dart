@@ -10,8 +10,10 @@ import 'package:flutter_sherpa_onnx/flutter_sherpa_onnx_ffi.dart';
 
 class Transcriber {
   late String _modelAssetPath;
+  
+  final int sampleRate;
 
-  Transcriber(this._modelAssetPath);
+  Transcriber(this._modelAssetPath, this._microphone, this.sampleRate);
 
   bool _loaded = false;
 
@@ -50,19 +52,7 @@ class Transcriber {
       avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
     ));
 
-    _microphone = (await MicStream.microphone(
-        audioFormat: AudioFormat.ENCODING_PCM_16BIT))!;
-
-    var sampleRate = (await MicStream.sampleRate)!.toInt();
-    var bitDepth = await MicStream.bitDepth;
-    if (bitDepth != 16) {
-      print(
-          "WARNING : BitDepth != 16, this will generate incorrect decoding results, TODO");
-    }
-    var microphoneBufferSize = await MicStream.bufferSize;
-
-    print(
-        "Microphone initialized with sampleRate $sampleRate, bitDepth $bitDepth and microphoneBufferSize $microphoneBufferSize");
+    
     plugin = FlutterSherpaOnnxFFI();
 
     _audioBuffer =
@@ -94,8 +84,7 @@ class Transcriber {
   Future<bool> createRecognizer() async {
     if (!Platform.isLinux) {
       await plugin.createRecognizer(
-          (await MicStream.sampleRate)!.toDouble(),
-          (await MicStream.bufferSize)!,
+          sampleRate.toDouble(),
           0.1,
           "assets/asr/tokens.txt",
           "assets/asr/encoder-epoch-99-avg-1.int8.with_runtime_opt.ort",

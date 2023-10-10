@@ -1,8 +1,10 @@
-import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 
+///
+/// A fixed-size, read-write buffer for raw audio data.
+/// 
 class AudioBuffer {
+
   int get lengthInBytes => _data.length;
 
   int _bytesWritten = 0;
