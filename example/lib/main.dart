@@ -33,6 +33,7 @@ class _MyAppState extends State<MyApp> {
   String? _partial;
   String? _decoded;
 
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {

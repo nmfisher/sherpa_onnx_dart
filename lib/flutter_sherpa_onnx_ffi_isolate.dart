@@ -146,16 +146,22 @@ class FlutterSherpaOnnxFFIIsolateRunner {
 
     var hotwords = "";
     _config!.ref.hotwords_file = hotwords.toNativeUtf8().cast<Char>();
-    _config!.ref.hotwords_score = 10.0;
+    _config!.ref.hotwords_score = 100.0;
 
     _recognizer = _lib.CreateOnlineRecognizer(_config!);
 
     _createdRecognizerPort.send(_recognizer != nullptr);
   }
 
+  bool isReadyForInput() {
+    return _recognizer != null && _stream != null && _sampleRate != null;
+  }
+
   void _onCreateStreamCommandReceived(dynamic hotwords) {
     if (_recognizer == null) {
+      print("No recognizer available, cannot create stream");
       _createdStreamPort.send(false);
+      return;
     }
     _readPointer = 0;
     _writePointer = 0;
@@ -169,7 +175,6 @@ class FlutterSherpaOnnxFFIIsolateRunner {
       _stream = _lib.CreateOnlineStreamWithHotwords(
           _recognizer!, hotwordsString.toNativeUtf8().cast<Char>());
     }
-
     _createdStreamPort.send(_stream != nullptr);
   }
 
@@ -220,7 +225,7 @@ class FlutterSherpaOnnxFFIIsolateRunner {
   static void create(List args) {
     SendPort setupPort = args[0];
     SendPort createdRecognizerPort = args[1];
-    SendPort createdStreamPort = args[1];
+    SendPort createdStreamPort = args[2];
     SendPort resultPort = args[3];
     BackgroundIsolateBinaryMessenger.ensureInitialized(
         args[4] as RootIsolateToken);

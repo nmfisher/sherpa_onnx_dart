@@ -34,7 +34,7 @@ class FlutterSherpaOnnxFFI {
   late Stream _createdRecognizerPortStream =
       _createdRecognizerPort.asBroadcastStream();
   final _createdStreamPort = ReceivePort();
-  late Stream _createdStreamPortStream = _createdStreamPort.asBroadcastStream();
+  Completer? _createdStream;
 
   final _setupPort = ReceivePort();
   bool _killed = false;
@@ -45,18 +45,25 @@ class FlutterSherpaOnnxFFI {
   late SendPort _killRecognizerPort;
   late SendPort _createStreamPort;
   late SendPort _shutdownPort;
+  final _isolateSetupComplete = Completer();
 
   final FlutterFfiAssetHelper _helper = FlutterFfiAssetHelper();
 
+  late final StreamSubscription _setupListener;
+  late final StreamSubscription _resultListener;
+  late final StreamSubscription _createdStreamListener;
+
   FlutterSherpaOnnxFFI() {
-    _setupPort.listen((msg) {
+    _setupListener = _setupPort.listen((msg) {
       _dataPort = msg[0];
       _createRecognizerPort = msg[1];
       _killRecognizerPort = msg[2];
       _createStreamPort = msg[3];
       _shutdownPort = msg[4];
+      _isolateSetupComplete.complete(true);
     });
-    _resultPort.listen((result) {
+
+    _resultListener = _resultPort.listen((result) {
       var resultMap = json.decode(result);
 
       bool isFinal = resultMap["is_final"] == true;
@@ -74,6 +81,14 @@ class FlutterSherpaOnnxFFI {
           _resultController.add(ASRResult(
               isFinal, [WordTranscription(resultMap["text"], null, null)]));
         }
+      }
+    });
+
+    _createdStreamListener = _createdStreamPort.listen((success) {
+      try {
+        _createdStream!.complete(success as bool);
+      } catch (err) {
+        print(err);
       }
     });
 
@@ -101,6 +116,7 @@ class FlutterSherpaOnnxFFI {
       String encoderAssetPath,
       String decoderAssetPath,
       String joinerAssetPath) async {
+    await _isolateSetupComplete.future;
     final completer = Completer<bool>();
     late StreamSubscription listener;
     listener = _createdRecognizerPortStream.listen((success) {
@@ -130,20 +146,24 @@ class FlutterSherpaOnnxFFI {
   }
 
   Future createStream(List<String>? phrases) async {
-    final completer = Completer<bool>();
-    late StreamSubscription listener;
-    listener = _createdStreamPortStream.listen((success) {
-      completer.complete(success);
-      listener.cancel();
-    });
-    _createStreamPort.send(phrases?.join("\n"));
-    var result = await completer.future;
+    if (_createdStream != null) {
+      throw Exception("A request to create a stream is already pending.");
+    }
+    _createdStream = Completer();
+    _createStreamPort
+        .send(phrases?.map((x) => x.split("").join(" ")).toList().join("\n"));
+    var result = await _createdStream!.future;
     if (result) {
       _killed = false;
     } else {
       throw Exception("Failed to create stream. Is a recognizer available?");
     }
+    _createdStream = null;
     return result;
+  }
+
+  Future destroyStream() {
+    throw Exception("TODO");
   }
 
   Future destroyRecognizer() async {
