@@ -16,8 +16,8 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		9BB0716B7C3AC02C92E826C5 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A35A6C44826BD7BA72B29B /* Pods_Runner.framework */; };
 		A48EFFA29C340A1640717C6C /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D197E9869B49CEBBC30DEC4A /* Pods_RunnerTests.framework */; };
-		DB89D3812AB89E5A0085FB33 /* onnxruntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB89D3802AB89E5A0085FB33 /* onnxruntime.framework */; };
-		DB89D3822AB89E5A0085FB33 /* onnxruntime.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DB89D3802AB89E5A0085FB33 /* onnxruntime.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DBAEAEE82AD6E3E3009554CC /* onnxruntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAEAEE72AD6E3E3009554CC /* onnxruntime.framework */; };
+		DBAEAEE92AD6E3E3009554CC /* onnxruntime.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBAEAEE72AD6E3E3009554CC /* onnxruntime.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,13 +31,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
+		DBAEAEEA2AD6E3E3009554CC /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				DB89D3822AB89E5A0085FB33 /* onnxruntime.framework in Embed Frameworks */,
+				DBAEAEE92AD6E3E3009554CC /* onnxruntime.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -70,6 +70,7 @@
 		D5A35A6C44826BD7BA72B29B /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB89D3802AB89E5A0085FB33 /* onnxruntime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = onnxruntime.framework; path = ../../../../../../../../Volumes/T7/polyvox/flutter/flutter_onnx/ios/lib/onnxruntime.framework; sourceTree = "<group>"; };
 		DB89D3832AB93F5B0085FB33 /* libsherpa-onnx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsherpa-onnx.a"; path = "../../ios/lib/libsherpa-onnx.a"; sourceTree = "<group>"; };
+		DBAEAEE72AD6E3E3009554CC /* onnxruntime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = onnxruntime.framework; path = ../../../flutter_onnx/ios/lib/onnxruntime.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB89D3812AB89E5A0085FB33 /* onnxruntime.framework in Frameworks */,
+				DBAEAEE82AD6E3E3009554CC /* onnxruntime.framework in Frameworks */,
 				9BB0716B7C3AC02C92E826C5 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -164,6 +165,7 @@
 		9D8EC6B80EEB7CA75B097DDF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DBAEAEE72AD6E3E3009554CC /* onnxruntime.framework */,
 				DB89D3832AB93F5B0085FB33 /* libsherpa-onnx.a */,
 				DB89D3802AB89E5A0085FB33 /* onnxruntime.framework */,
 				D5A35A6C44826BD7BA72B29B /* Pods_Runner.framework */,
@@ -203,9 +205,9 @@
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
-				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				BFCD23098576B78D2AF9EDC8 /* [CP] Embed Pods Frameworks */,
+				DBAEAEEA2AD6E3E3009554CC /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -482,7 +484,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 873X6R39HP;
+				DEVELOPMENT_TEAM = TM2B4SJXNJ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -674,7 +676,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 873X6R39HP;
+				DEVELOPMENT_TEAM = TM2B4SJXNJ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -700,7 +702,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 873X6R39HP;
+				DEVELOPMENT_TEAM = TM2B4SJXNJ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
