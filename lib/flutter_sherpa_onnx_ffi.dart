@@ -130,8 +130,6 @@ class FlutterSherpaOnnxFFI {
     var decoderFilePath = await _helper.assetToFilepath(decoderAssetPath);
     var joinerFilePath = await _helper.assetToFilepath(joinerAssetPath);
 
-    var dir = await getApplicationDocumentsDirectory();
-
     _createRecognizerPort.send([
       sampleRate,
       chunkLengthInSecs,

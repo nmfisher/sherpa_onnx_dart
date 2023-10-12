@@ -70,7 +70,7 @@ class FlutterSherpaOnnxFFIIsolateRunner {
           "sherpa-onnx-c-api.dll");
       _lib = NativeLibrary(DynamicLibrary.open(path));
     } else {
-      DynamicLibrary.process();
+      _lib = NativeLibrary(DynamicLibrary.process());
     }
   }
 
