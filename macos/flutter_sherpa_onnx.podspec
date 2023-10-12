@@ -14,11 +14,21 @@ A new Flutter plugin project.
   s.author           = { 'Your Company' => 'email@example.com' }
 
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/dart_api_dl.c', 'Classes/**/*', 'include/custom/custom_api.h', 'include/SwiftFlutterSherpaOnnxPlugin-Bridging-Header.h'
+  s.source_files = 'Classes/**/*'
   s.dependency 'FlutterMacOS'
 
-
-  s.platform = :osx, '10.11'
+  s.platform = :osx, '13'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
+  s.library = 'c++'
+
+
+  s.pod_target_xcconfig = { 
+    'DEFINES_MODULE' => 'YES', 
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',     
+    "FRAMEWORK_SEARCH_PATHS" => '"${PODS_TARGET_SRCROOT}/../../flutter_onnx/macos/lib"',
+    'USER_HEADER_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}/include" "$(inherited)"',
+    'OTHER_LDFLAGS' => '-v -framework Accelerate -framework onnxruntime -force_load ${PODS_TARGET_SRCROOT}/lib/libsherpa-onnx.a -force_load ${PODS_TARGET_SRCROOT}/lib/libcargs.a $(inherited)',
+    'LIBRARY_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}/lib" "$(inherited)"',
+  }
 end

@@ -66,10 +66,11 @@ class FlutterSherpaOnnxFFIIsolateRunner {
       _lib = NativeLibrary(
           DynamicLibrary.open("libflutter_sherpa_onnx_plugin.so"));
     } else if (Platform.isWindows) {
-      var path = p.join(File(Platform.resolvedExecutable).parent.path, "sherpa-onnx-c-api.dll");
+      var path = p.join(File(Platform.resolvedExecutable).parent.path,
+          "sherpa-onnx-c-api.dll");
       _lib = NativeLibrary(DynamicLibrary.open(path));
     } else {
-      DynamicLibrary.process();
+      _lib = NativeLibrary(DynamicLibrary.process());
     }
   }
 
@@ -83,11 +84,12 @@ class FlutterSherpaOnnxFFIIsolateRunner {
     var sampleRate = args[0] as double;
     _sampleRate = sampleRate.toInt();
     var chunkLengthInSecs = args[1] as double;
+    String tokensPath = args[2];
+    String encoderPath = args[3];
+    String decoderPath = args[4];
+    String joinerPath = args[5];
+    var hotwordsScore = args[6] as double;
 
-    // bufferSizeInBytes is the (expected) size of each frame passed to _onWaveformDataReceived
-    // usually, this the size of the microphone buffer
-    // chunk length is the chunkLengthInSecs, rounded up to the nearest multiple of bufferSizeInBytes
-    
     var newChunkLengthInSamples = (chunkLengthInSecs * sampleRate);
 
     if (newChunkLengthInSamples != _chunkLengthInSamples) {
@@ -101,16 +103,14 @@ class FlutterSherpaOnnxFFIIsolateRunner {
       // reads will be some multiple of _chunkLengthInSamples
       // write sizes will be variable on certain platforms (e.g. Windows) as these do not have a fixed hardware buffer size
       // we therefore size our RingBuffer to some multiple of _chunkLengthInSamples
-      _buffer = RingBuffer(readSizeInSamples: _chunkLengthInSamples, lengthInBytes: _chunkLengthInSamples * _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER * sizeOf<Int16>());
+      _buffer = RingBuffer(
+          readSizeInSamples: _chunkLengthInSamples,
+          lengthInBytes: _chunkLengthInSamples *
+              _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER *
+              sizeOf<Int16>());
     }
 
     print("Using chunk length in samples : $_chunkLengthInSamples ");
-
-
-    String tokensPath = args[2];
-    String encoderPath = args[3];
-    String decoderPath = args[4];
-    String joinerPath = args[5];
 
     _config = calloc<SherpaOnnxOnlineRecognizerConfig>();
 
@@ -146,7 +146,7 @@ class FlutterSherpaOnnxFFIIsolateRunner {
 
     var hotwords = "";
     _config!.ref.hotwords_file = hotwords.toNativeUtf8().cast<Char>();
-    _config!.ref.hotwords_score = 100.0;
+    _config!.ref.hotwords_score = hotwordsScore;
 
     _recognizer = _lib.CreateOnlineRecognizer(_config!);
 
@@ -182,7 +182,6 @@ class FlutterSherpaOnnxFFIIsolateRunner {
   int _writePointer = 0;
 
   void _onWaveformDataReceived(dynamic data) async {
-
     _buffer!.write(data as Uint8List);
 
     if (!_buffer!.canRead()) {

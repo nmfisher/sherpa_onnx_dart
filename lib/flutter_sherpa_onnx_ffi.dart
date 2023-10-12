@@ -115,7 +115,8 @@ class FlutterSherpaOnnxFFI {
       String tokensAssetPath,
       String encoderAssetPath,
       String decoderAssetPath,
-      String joinerAssetPath) async {
+      String joinerAssetPath,
+      {double hotwordsScore = 20.0}) async {
     await _isolateSetupComplete.future;
     final completer = Completer<bool>();
     late StreamSubscription listener;
@@ -125,19 +126,18 @@ class FlutterSherpaOnnxFFI {
     });
 
     var tokensFilePath = await _helper.assetToFilepath(tokensAssetPath);
-    var encoderFilePsath = await _helper.assetToFilepath(encoderAssetPath);
+    var encoderFilePath = await _helper.assetToFilepath(encoderAssetPath);
     var decoderFilePath = await _helper.assetToFilepath(decoderAssetPath);
     var joinerFilePath = await _helper.assetToFilepath(joinerAssetPath);
-
-    var dir = await getApplicationDocumentsDirectory();
 
     _createRecognizerPort.send([
       sampleRate,
       chunkLengthInSecs,
       tokensFilePath,
-      encoderFilePsath,
+      encoderFilePath,
       decoderFilePath,
       joinerFilePath,
+      hotwordsScore
     ]);
 
     var result = await completer.future;
