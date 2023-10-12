@@ -116,7 +116,8 @@ class FlutterSherpaOnnxFFI {
       String tokensAssetPath,
       String encoderAssetPath,
       String decoderAssetPath,
-      String joinerAssetPath) async {
+      String joinerAssetPath,
+      {double hotwordsScore = 20.0}) async {
     await _isolateSetupComplete.future;
     final completer = Completer<bool>();
     late StreamSubscription listener;
@@ -140,6 +141,7 @@ class FlutterSherpaOnnxFFI {
       encoderFilePsath,
       decoderFilePath,
       joinerFilePath,
+      hotwordsScore
     ]);
 
     var result = await completer.future;

@@ -81,6 +81,7 @@ class FlutterSherpaOnnxFFIIsolateRunner {
     _sampleRate = sampleRate.toInt();
     var bufferSizeInBytes = args[1] as int;
     var chunkLengthInSecs = args[2] as double;
+    var hotwordsScore = args[3] as double;
 
     // bufferSizeInBytes is the (expected) size of each frame passed to _onWaveformDataReceived
     // usually, this the size of the microphone buffer
@@ -149,7 +150,7 @@ class FlutterSherpaOnnxFFIIsolateRunner {
 
     var hotwords = "";
     _config!.ref.hotwords_file = hotwords.toNativeUtf8().cast<Char>();
-    _config!.ref.hotwords_score = 100.0;
+    _config!.ref.hotwords_score = hotwordsScore;
 
     _recognizer = _lib.CreateOnlineRecognizer(_config!);
 
