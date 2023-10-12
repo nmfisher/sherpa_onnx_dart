@@ -4,16 +4,12 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter_sherpa_onnx/flutter_sherpa_onnx_ffi.dart';
 import 'package:flutter_test/flutter_test.dart';
-// import '../lib/main.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   group('Recognizer tests', () {
     testWidgets('successfully recognize from a file', (tester) async {
-      // await tester.pumpWidget(MyApp());
-
-      // final MyAppState myWidgetState = tester.state(find.byType(MyApp));
       var plugin = FlutterSherpaOnnxFFI();
       await plugin.createRecognizer(
           16000,
