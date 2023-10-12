@@ -22,7 +22,8 @@ dependencies:
   wave_builder:
     git:
       url: https://github.com/nmfisher/wave_builder.git
-
+  record: 5.0.0-beta.3+1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

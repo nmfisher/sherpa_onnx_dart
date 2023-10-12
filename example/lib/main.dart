@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:mic_stream/mic_stream.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:wave_builder/wave_builder.dart';
+import 'package:record/record.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,8 +41,16 @@ class _MyAppState extends State<MyApp> {
       if (!status.isGranted) {
         throw Exception("NO SDCARD PERMISSION");
       }
+      if (Platform.isWindows) {
+        final record = AudioRecorder();
+        final config = const RecordConfig(encoder: AudioEncoder.pcm16bits, numChannels: 1);
+        
+        final stream = await record
+            .startStream(config);
 
-      if (!Platform.isLinux) {
+        _transcriber = Transcriber("assets/asr", stream,
+            config.sampleRate);
+      } else if (!Platform.isLinux) {
         var bitDepth = await MicStream.bitDepth;
         var sampleRate = await MicStream.sampleRate;
         print(
@@ -50,28 +59,35 @@ class _MyAppState extends State<MyApp> {
             audioFormat: AudioFormat.ENCODING_PCM_16BIT,
             sampleRate: Platform.isMacOS ? 48000 : 16000);
 
-        print("Got stream");
-
         var listener = mic!.listen((event) {});
-        bitDepth = await MicStream.bitDepth;
-        sampleRate = await MicStream.sampleRate;
-        print("after listen, bd is $bitDepth and sampleRate is $sampleRate");
-
-        _transcriber = Transcriber("assets/asr");
-        await _transcriber.initialize();
-
-        setState(() {
-          _ready = true;
-        });
         listener.cancel();
 
-        print("DONE : $mic");
+        bitDepth = await MicStream.bitDepth;
+        sampleRate = await MicStream.sampleRate;
+        print("Bit depth $bitDepth / sampleRate  $sampleRate");
+        if (bitDepth != 16) {
+          print(
+              "WARNING : BitDepth != 16, this will generate incorrect decoding results, TODO");
+        }
+
+        var microphone = (await MicStream.microphone(
+            audioFormat: AudioFormat.ENCODING_PCM_16BIT))!;
+
+        var microphoneBufferSize = await MicStream.bufferSize;
+
+        print(
+            "Microphone initialized with sampleRate $sampleRate, bitDepth $bitDepth and microphoneBufferSize $microphoneBufferSize");
+
+        _transcriber = Transcriber("assets/asr", microphone,
+            sampleRate!.toInt());
       } else {
-        _transcriber = Transcriber("assets/asr");
-        setState(() {
-          _ready = true;
-        });
+        throw Exception("TODO");
       }
+      await _transcriber.initialize();
+
+      setState(() {
+        _ready = true;
+      });
     });
   }
 
@@ -88,9 +104,6 @@ class _MyAppState extends State<MyApp> {
                     child: const Text("Create Recognizer"),
                     onPressed: !_hasRecognizer
                         ? () async {
-                            var sampleRate = Platform.isLinux
-                                ? 44100.0
-                                : (await MicStream.sampleRate)!;
 
                             await _transcriber.createRecognizer();
 

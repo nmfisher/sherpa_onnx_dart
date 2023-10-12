@@ -41,3 +41,6 @@ flutter:
         pluginClass: FlutterSherpaOnnxPlugin
       linux:
         pluginClass: FlutterSherpaOnnxPlugin
+      windows:
+        pluginClass: FlutterSherpaOnnxPluginCApi
+

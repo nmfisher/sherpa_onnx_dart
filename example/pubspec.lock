@@ -125,6 +125,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.7"
   just_audio:
     dependency: "direct main"
     description:
@@ -300,6 +308,62 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.6"
+  record:
+    dependency: "direct main"
+    description:
+      name: record
+      sha256: "1737f663f5ec2b9036f319451c2345fe9103db732765cbd93c2bfe0c93709df6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0-beta.3+1"
+  record_android:
+    dependency: transitive
+    description:
+      name: record_android
+      sha256: "82bdcfadc8a79495c9be31a89b9ddbe027100f03585018bebeb40c6ef60c3b3e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0-beta.2"
+  record_darwin:
+    dependency: transitive
+    description:
+      name: record_darwin
+      sha256: "07f31e531d9b12797a1b9749e290daa8c4a5e17145ec09f655cbf97814a36c5a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0-beta.2+3"
+  record_linux:
+    dependency: transitive
+    description:
+      name: record_linux
+      sha256: "0202bc41f0b870321dd2080ac7b500743730e44887f4e0aff7837e144b81404b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
+  record_platform_interface:
+    dependency: transitive
+    description:
+      name: record_platform_interface
+      sha256: c5034d04fb2066dedac6d6b4352a8943dda0190bb50432311c53ae9b6a1901b7
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  record_web:
+    dependency: transitive
+    description:
+      name: record_web
+      sha256: "16902fa109ae6d13773eec93b827ee9a8381da9c92ef94eb6d6725aab3faa893"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0-beta.2+4"
+  record_windows:
+    dependency: transitive
+    description:
+      name: record_windows
+      sha256: "9060f518f1c3f2314530e81a06362a7579421a775b09601369d8e8c2a7fd3a96"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0-beta.2+1"
   rxdart:
     dependency: transitive
     description:

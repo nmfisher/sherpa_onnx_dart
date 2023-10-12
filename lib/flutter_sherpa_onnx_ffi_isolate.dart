@@ -4,8 +4,9 @@ import 'dart:isolate';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
+import 'package:flutter_sherpa_onnx/ring_buffer.dart';
 
-import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 
 import './generated_bindings.dart';
 import 'package:flutter/services.dart';
@@ -19,10 +20,9 @@ class FlutterSherpaOnnxFFIIsolateRunner {
 
   late final NativeLibrary _lib;
 
-  Pointer<Float>? _bufferPtr;
+  RingBuffer? _buffer;
 
   int _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER = 10;
-  late int _bufferLen;
 
   Pointer<SherpaOnnxOnlineRecognizer>? _recognizer;
   Pointer<SherpaOnnxOnlineStream>? _stream;
@@ -58,16 +58,20 @@ class FlutterSherpaOnnxFFIIsolateRunner {
       if (message) {
         _onKillRecognizerCommandReceived(null);
 
-        if (_bufferPtr != null) {
-          calloc.free(_bufferPtr!);
-        }
+        _buffer?.dispose();
         Isolate.current.kill();
       }
     });
-
-    _lib = NativeLibrary(Platform.isAndroid || Platform.isLinux
-        ? DynamicLibrary.open("libflutter_sherpa_onnx_plugin.so")
-        : DynamicLibrary.process());
+    if (Platform.isAndroid || Platform.isLinux) {
+      _lib = NativeLibrary(
+          DynamicLibrary.open("libflutter_sherpa_onnx_plugin.so"));
+    } else if (Platform.isWindows) {
+      var path = p.join(File(Platform.resolvedExecutable).parent.path,
+          "sherpa-onnx-c-api.dll");
+      _lib = NativeLibrary(DynamicLibrary.open(path));
+    } else {
+      DynamicLibrary.process();
+    }
   }
 
   int? _sampleRate;
@@ -79,42 +83,34 @@ class FlutterSherpaOnnxFFIIsolateRunner {
 
     var sampleRate = args[0] as double;
     _sampleRate = sampleRate.toInt();
-    var bufferSizeInBytes = args[1] as int;
-    var chunkLengthInSecs = args[2] as double;
-    var hotwordsScore = args[3] as double;
+    var chunkLengthInSecs = args[1] as double;
+    String tokensPath = args[2];
+    String encoderPath = args[3];
+    String decoderPath = args[4];
+    String joinerPath = args[5];
+    var hotwordsScore = args[6] as double;
 
-    // bufferSizeInBytes is the (expected) size of each frame passed to _onWaveformDataReceived
-    // usually, this the size of the microphone buffer
-    // chunk length is the chunkLengthInSecs, rounded up to the nearest multiple of bufferSizeInBytes
-    var bufferSizeInSamples = bufferSizeInBytes / sizeOf<Int16>();
     var newChunkLengthInSamples = (chunkLengthInSecs * sampleRate);
-    newChunkLengthInSamples =
-        (newChunkLengthInSamples / bufferSizeInSamples).ceil() *
-            bufferSizeInSamples;
 
     if (newChunkLengthInSamples != _chunkLengthInSamples) {
       _chunkLengthInSamples = newChunkLengthInSamples.toInt();
-      print("Setting chunk length in samples to $_chunkLengthInSamples ");
 
-      if (_bufferPtr != null) {
-        calloc.free(_bufferPtr!);
-      }
+      _buffer?.dispose();
 
       // when [_onWaveformDataReceived] is called, we will wait until at least [_chunkLengthInSamples] samples are available before passing to the decoder
       // this means each call will write [bufferSizeInSamples] samples to a temporary storage buffer
       // this buffer must be large enough to avoid read/write under/overflow (i.e. so we can write ahead of the current read position).
-      // reads/writes are both some multiple of _chunkLengthInSamples, so we size this buffer to some (larger) multiple of _chunkLengthInSamples
-      // when the read/writer pointers hit the end of the buffer, they are reset to zero
-      // as long as the multiple is large enough, this will avoid read/write under/overflow.
-      // _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER is this multiple (think of it as "how many chunks can we read (pass to the decoder) or write (from the microphone) before resetting the read/write pointer to zero")
-      _bufferLen = _chunkLengthInSamples * _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER;
-      _bufferPtr = calloc<Float>(_bufferLen);
+      // reads will be some multiple of _chunkLengthInSamples
+      // write sizes will be variable on certain platforms (e.g. Windows) as these do not have a fixed hardware buffer size
+      // we therefore size our RingBuffer to some multiple of _chunkLengthInSamples
+      _buffer = RingBuffer(
+          readSizeInSamples: _chunkLengthInSamples,
+          lengthInBytes: _chunkLengthInSamples *
+              _CHUNK_LENGTH_MULTIPLE_FOR_BUFFER *
+              sizeOf<Int16>());
     }
 
-    String tokensPath = args[3];
-    String encoderPath = args[4];
-    String decoderPath = args[5];
-    String joinerPath = args[6];
+    print("Using chunk length in samples : $_chunkLengthInSamples ");
 
     _config = calloc<SherpaOnnxOnlineRecognizerConfig>();
 
@@ -186,20 +182,12 @@ class FlutterSherpaOnnxFFIIsolateRunner {
   int _writePointer = 0;
 
   void _onWaveformDataReceived(dynamic data) async {
-    var tl = Int16List.sublistView(Uint8List.fromList(data));
+    _buffer!.write(data as Uint8List);
 
-    for (int i = 0; i < tl.length; i++) {
-      _bufferPtr!.elementAt((_writePointer + i) % _bufferLen).value =
-          tl[i] / 32768.0;
-    }
-    _writePointer += tl.length;
-
-    if (_writePointer - _readPointer < _chunkLengthInSamples) {
+    if (!_buffer!.canRead()) {
       return;
     }
-
-    var floatPtr = _bufferPtr!.elementAt(_readPointer % _bufferLen);
-    _readPointer += _chunkLengthInSamples;
+    var floatPtr = _buffer!.read();
 
     _lib.AcceptWaveform(
         _stream!, _sampleRate!, floatPtr, _chunkLengthInSamples);
