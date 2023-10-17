@@ -77,20 +77,10 @@ class MyAppState extends State<MyApp> {
       var listener = mic!.listen((event) {});
       listener.cancel();
 
-      var bitDepth = await MicStream.bitDepth;
-      microphoneSampleRate = (await MicStream.sampleRate)!.toDouble();
-      print(
-          "Getting mic stream, bd before listen is $bitDepth and sampleRate is $microphoneSampleRate");
-
-      microphoneSampleRate = (await MicStream.sampleRate)!.toDouble();
-
-      if (bitDepth != 16) {
-        print(
-            "WARNING : BitDepth != 16, this will generate incorrect decoding results, TODO");
-      }
-
       var microphone = (await MicStream.microphone(
           audioFormat: AudioFormat.ENCODING_PCM_16BIT))!;
+
+      microphoneSampleRate = (await MicStream.sampleRate)!.toDouble();
 
       microphone.listen(_handleMicrophoneInput);
     } else {
@@ -167,7 +157,7 @@ class MyAppState extends State<MyApp> {
                   child: const Text("Create Recognizer"),
                   onPressed: !_hasRecognizer
                       ? () async {
-                          createRecognizer(16000);
+                          createRecognizer(microphoneSampleRate);
                         }
                       : null),
               ElevatedButton(
