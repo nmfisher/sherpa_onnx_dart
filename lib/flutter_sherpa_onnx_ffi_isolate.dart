@@ -83,7 +83,10 @@ class FlutterSherpaOnnxFFIIsolateRunner {
 
     var sampleRate = args[0] as double;
     _sampleRate = sampleRate.toInt();
+
     var chunkLengthInSecs = args[1] as double;
+    print(
+        "Creating recognizer with sampleRate $sampleRate/chunkLengthInSecs $chunkLengthInSecs  ");
     String tokensPath = args[2];
     String encoderPath = args[3];
     String decoderPath = args[4];
@@ -175,6 +178,7 @@ class FlutterSherpaOnnxFFIIsolateRunner {
       _stream = _lib.CreateOnlineStreamWithHotwords(
           _recognizer!, hotwordsString.toNativeUtf8().cast<Char>());
     }
+    _lib.Reset(_recognizer!, _stream!);
     _createdStreamPort.send(_stream != nullptr);
   }
 
