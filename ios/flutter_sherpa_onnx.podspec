@@ -22,16 +22,16 @@ A new flutter plugin project.
   s.pod_target_xcconfig = { 
     'DEFINES_MODULE' => 'YES', 
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',     
-    "FRAMEWORK_SEARCH_PATHS" => '"${PODS_ROOT}/../.symlinks/plugins/flutter_onnx/ios/lib"',
+    "FRAMEWORK_SEARCH_PATHS" => '"${PODS_ROOT}/../../flutter_onnx/ios/lib" "${PODS_ROOT}/../../../../flutter_onnx/ios/lib" "${PODS_ROOT}/../flutter_onnx/ios/lib" "$(inherited)"',
     'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/include" "$(inherited)"',
     'OTHER_LDFLAGS' => '-v -framework Accelerate -framework onnxruntime -L${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib/ -lsherpa-onnx -force_load ${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib/libsherpa-onnx.a $(inherited)'
   }
   s.user_target_xcconfig = { 
     'DEFINES_MODULE' => 'YES', 
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',     
-    "FRAMEWORK_SEARCH_PATHS" => '"${PODS_ROOT}/../.symlinks/plugins/flutter_onnx/ios/lib"',
+    "FRAMEWORK_SEARCH_PATHS" => '"${PODS_ROOT}/../../flutter_onnx/ios/lib" "${PODS_ROOT}/../../../../flutter_onnx/ios/lib" "${PODS_ROOT}/../flutter_onnx/ios/lib" "$(inherited)"',
     'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/include" "$(inherited)"',
-    'OTHER_LDFLAGS' => '-v -framework Accelerate $(inherited) -framework onnxruntime -L${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib -lsherpa-onnx -force_load ${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib/libsherpa-onnx.a $(inherited)'
+    'OTHER_LDFLAGS' => '-v -framework Accelerate -framework onnxruntime -L${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib/ -lsherpa-onnx -force_load ${PODS_ROOT}/../.symlinks/plugins/flutter_sherpa_onnx/ios/lib/libsherpa-onnx.a $(inherited)'
   }
  
   s.swift_version = '5.0'
