@@ -63,26 +63,7 @@ class FlutterSherpaOnnxFFI {
       _isolateSetupComplete.complete(true);
     });
 
-    _resultListener = _resultPort.listen((result) {
-      var resultMap = json.decode(result);
-
-      bool isFinal = resultMap["is_final"] == true;
-
-      if (isFinal) {
-        if (resultMap["text"].isNotEmpty) {
-          var words = resultMap["tokens"]
-              .map((r) => WordTranscription(r["word"], r["start"], r["end"]))
-              .cast<WordTranscription>()
-              .toList();
-          _resultController.add(ASRResult(isFinal, words));
-        }
-      } else {
-        if (resultMap["text"].isNotEmpty) {
-          _resultController.add(ASRResult(
-              isFinal, [WordTranscription(resultMap["text"], null, null)]));
-        }
-      }
-    });
+    _resultListener = _resultPort.listen(_onResult);
 
     _createdStreamListener = _createdStreamPort.listen((success) {
       try {
@@ -101,6 +82,29 @@ class FlutterSherpaOnnxFFI {
     ]).then((isolate) {
       _runner = isolate;
     });
+  }
+
+  void _onResult(dynamic result) {
+    var resultMap = json.decode(result);
+
+    bool isFinal = resultMap["is_endpoint"] == true;
+
+    if (isFinal) {
+      if (resultMap["text"].isNotEmpty) {
+        var numTokens = resultMap["tokens"].length;
+        var words = <WordTranscription>[];
+        for (int i = 0; i < numTokens; i++) {
+          words.add(WordTranscription(
+              resultMap["tokens"][i], resultMap["timestamps"][i], -1));
+        }
+        _resultController.add(ASRResult(isFinal, words));
+      }
+    } else {
+      if (resultMap["text"].isNotEmpty) {
+        _resultController.add(ASRResult(
+            isFinal, [WordTranscription(resultMap["text"], null, null)]));
+      }
+    }
   }
 
   Future decodeBuffer() async {
