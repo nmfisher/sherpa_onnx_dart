@@ -7,7 +7,6 @@ import Foundation
 
 import audio_session
 import flutter_ffi_asset_helper
-import flutter_onnx
 import flutter_sherpa_onnx
 import just_audio
 import mic_stream
@@ -17,7 +16,6 @@ import record_darwin
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AudioSessionPlugin.register(with: registry.registrar(forPlugin: "AudioSessionPlugin"))
   FlutterFfiAssetHelperPlugin.register(with: registry.registrar(forPlugin: "FlutterFfiAssetHelperPlugin"))
-  FlutterOnnxPlugin.register(with: registry.registrar(forPlugin: "FlutterOnnxPlugin"))
   FlutterSherpaOnnxPlugin.register(with: registry.registrar(forPlugin: "FlutterSherpaOnnxPlugin"))
   JustAudioPlugin.register(with: registry.registrar(forPlugin: "JustAudioPlugin"))
   MicStreamPlugin.register(with: registry.registrar(forPlugin: "MicStreamPlugin"))

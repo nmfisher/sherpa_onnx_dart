@@ -12,7 +12,7 @@ add_library(
     src/main/cpp/dummy.cpp
 )
 
-target_link_libraries(flutter_sherpa_onnx_plugin -landroid -llog -lc++ -lsherpa-onnx-core -lkaldi-native-fbank-core -lsherpa-onnx-c-api)
+target_link_libraries(flutter_sherpa_onnx_plugin -landroid -llog -lc++ -lsherpa-onnx-core -lsherpa-onnx-fst -lsherpa-onnx-kaldifst-core -lkaldi-decoder-core -lkaldi-native-fbank-core -lsherpa-onnx-c-api)
 
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)

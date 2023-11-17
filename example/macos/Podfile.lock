@@ -3,8 +3,6 @@ PODS:
     - FlutterMacOS
   - flutter_ffi_asset_helper (0.0.1):
     - FlutterMacOS
-  - flutter_onnx (0.0.1):
-    - FlutterMacOS
   - flutter_sherpa_onnx (0.0.1):
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
@@ -22,7 +20,6 @@ PODS:
 DEPENDENCIES:
   - audio_session (from `Flutter/ephemeral/.symlinks/plugins/audio_session/macos`)
   - flutter_ffi_asset_helper (from `Flutter/ephemeral/.symlinks/plugins/flutter_ffi_asset_helper/macos`)
-  - flutter_onnx (from `Flutter/ephemeral/.symlinks/plugins/flutter_onnx/macos`)
   - flutter_sherpa_onnx (from `Flutter/ephemeral/.symlinks/plugins/flutter_sherpa_onnx/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - just_audio (from `Flutter/ephemeral/.symlinks/plugins/just_audio/macos`)
@@ -35,8 +32,6 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/audio_session/macos
   flutter_ffi_asset_helper:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_ffi_asset_helper/macos
-  flutter_onnx:
-    :path: Flutter/ephemeral/.symlinks/plugins/flutter_onnx/macos
   flutter_sherpa_onnx:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_sherpa_onnx/macos
   FlutterMacOS:
@@ -53,8 +48,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   audio_session: dea1f41890dbf1718f04a56f1d6150fd50039b72
   flutter_ffi_asset_helper: 6dfb0a7bf41687bf86915b67bb13c39d0080f409
-  flutter_onnx: 4513b1f6cc7de22ed0b7cf8216ed8468d2923013
-  flutter_sherpa_onnx: 40e1ca321bb674334d2eecd0f7efed760004117e
+  flutter_sherpa_onnx: 94867d1ad87656c96500a60f4ad711c679086a17
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   just_audio: 9b67ca7b97c61cfc9784ea23cd8cc55eb226d489
   mic_stream: c3bc8a10c5451a0f5ef75a54a75caf25a3d146c4

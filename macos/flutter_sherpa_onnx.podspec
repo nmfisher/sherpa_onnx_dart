@@ -22,13 +22,12 @@ A new Flutter plugin project.
   s.swift_version = '5.0'
   s.library = 'c++'
 
-
   s.pod_target_xcconfig = { 
     'DEFINES_MODULE' => 'YES', 
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',     
     "FRAMEWORK_SEARCH_PATHS" => '"${PODS_TARGET_SRCROOT}/../../flutter_onnx/macos/lib"',
     'USER_HEADER_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}/include" "$(inherited)"',
-    'OTHER_LDFLAGS' => '-v -framework Accelerate -framework onnxruntime -force_load ${PODS_TARGET_SRCROOT}/lib/libsherpa-onnx.a -force_load ${PODS_TARGET_SRCROOT}/lib/libcargs.a $(inherited)',
+    'OTHER_LDFLAGS' => '-v -framework Accelerate -framework onnxruntime -lsherpa-onnx-fst -force_load ${PODS_TARGET_SRCROOT}/lib/libsherpa-onnx-fst.a -lsherpa-onnx-c-api -force_load ${PODS_TARGET_SRCROOT}/lib/libsherpa-onnx-c-api.a -lsherpa-onnx-core -force_load ${PODS_TARGET_SRCROOT}/lib/libsherpa-onnx-core.a -lkaldi-decoder-core -force_load ${PODS_TARGET_SRCROOT}/lib/libkaldi-decoder-core.a -lkaldi-native-fbank-core -force_load ${PODS_TARGET_SRCROOT}/lib/libkaldi-native-fbank-core.a -lsherpa-onnx-kaldifst-core -force_load ${PODS_TARGET_SRCROOT}/lib/libsherpa-onnx-kaldifst-core.a -lcargs -force_load ${PODS_TARGET_SRCROOT}/lib/libcargs.a $(inherited)',
     'LIBRARY_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}/lib" "$(inherited)"',
   }
 end

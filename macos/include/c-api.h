@@ -22,6 +22,11 @@ extern "C" {
 // We will set SHERPA_ONNX_BUILD_SHARED_LIBS and SHERPA_ONNX_BUILD_MAIN_LIB in
 // CMakeLists.txt
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
+#endif
+
 #if defined(_WIN32)
 #if defined(SHERPA_ONNX_BUILD_SHARED_LIBS)
 #define SHERPA_ONNX_EXPORT __declspec(dllexport)
@@ -31,9 +36,10 @@ extern "C" {
 #define SHERPA_ONNX_IMPORT
 #endif
 #else  // WIN32
-#define SHERPA_ONNX_EXPORT __attribute__((visibility("default"))) 
+#define SHERPA_ONNX_EXPORT __attribute__((visibility("default")))
+
 #define SHERPA_ONNX_IMPORT SHERPA_ONNX_EXPORT
-#endif
+#endif  // WIN32
 
 #if defined(SHERPA_ONNX_BUILD_MAIN_LIB)
 #define SHERPA_ONNX_API SHERPA_ONNX_EXPORT
@@ -178,12 +184,14 @@ SHERPA_ONNX_API void DestroyOnlineRecognizer(
 SHERPA_ONNX_API SherpaOnnxOnlineStream *CreateOnlineStream(
     const SherpaOnnxOnlineRecognizer *recognizer);
 
-/// Create an online stream for accepting wave samples with the specified hot words.
+/// Create an online stream for accepting wave samples with the specified hot
+/// words.
 ///
 /// @param recognizer  A pointer returned by CreateOnlineRecognizer()
 /// @return Return a pointer to an OnlineStream. The user has to invoke
 ///         DestroyOnlineStream() to free it to avoid memory leak.
-SHERPA_ONNX_API SherpaOnnxOnlineStream *CreateOnlineStreamWithHotwords(const SherpaOnnxOnlineRecognizer *recognizer, const char* hotwords);
+SHERPA_ONNX_API SherpaOnnxOnlineStream *CreateOnlineStreamWithHotwords(
+    const SherpaOnnxOnlineRecognizer *recognizer, const char *hotwords);
 
 /// Destroy an online stream.
 ///
@@ -559,9 +567,18 @@ SHERPA_ONNX_API void SherpaOnnxVoiceActivityDetectorAcceptWaveform(
 SHERPA_ONNX_API int32_t
 SherpaOnnxVoiceActivityDetectorEmpty(SherpaOnnxVoiceActivityDetector *p);
 
+// Return 1 if there is voice detected.
+// Return 0 if voice is silent.
+SHERPA_ONNX_API int32_t
+SherpaOnnxVoiceActivityDetectorDetected(SherpaOnnxVoiceActivityDetector *p);
+
 // Return the first speech segment.
 // It throws if SherpaOnnxVoiceActivityDetectorEmpty() returns 1.
 SHERPA_ONNX_API void SherpaOnnxVoiceActivityDetectorPop(
+    SherpaOnnxVoiceActivityDetector *p);
+
+// Clear current speech segments.
+SHERPA_ONNX_API void SherpaOnnxVoiceActivityDetectorClear(
     SherpaOnnxVoiceActivityDetector *p);
 
 // Return the first speech segment.
@@ -577,6 +594,68 @@ SHERPA_ONNX_API void SherpaOnnxDestroySpeechSegment(
 // Re-initialize the voice activity detector.
 SHERPA_ONNX_API void SherpaOnnxVoiceActivityDetectorReset(
     SherpaOnnxVoiceActivityDetector *p);
+
+// ============================================================
+// For offline Text-to-Speech (i.e., non-streaming TTS)
+// ============================================================
+SHERPA_ONNX_API typedef struct SherpaOnnxOfflineTtsVitsModelConfig {
+  const char *model;
+  const char *lexicon;
+  const char *tokens;
+
+  float noise_scale;
+  float noise_scale_w;
+  float length_scale;  // < 1, faster in speed; > 1, slower in speed
+} SherpaOnnxOfflineTtsVitsModelConfig;
+
+SHERPA_ONNX_API typedef struct SherpaOnnxOfflineTtsModelConfig {
+  SherpaOnnxOfflineTtsVitsModelConfig vits;
+  int32_t num_threads;
+  int32_t debug;
+  const char *provider;
+} SherpaOnnxOfflineTtsModelConfig;
+
+SHERPA_ONNX_API typedef struct SherpaOnnxOfflineTtsConfig {
+  SherpaOnnxOfflineTtsModelConfig model;
+} SherpaOnnxOfflineTtsConfig;
+
+SHERPA_ONNX_API typedef struct SherpaOnnxGeneratedAudio {
+  const float *samples;  // in the range [-1, 1]
+  int32_t n;             // number of samples
+  int32_t sample_rate;
+} SherpaOnnxGeneratedAudio;
+
+SHERPA_ONNX_API typedef struct SherpaOnnxOfflineTts SherpaOnnxOfflineTts;
+
+// Create an instance of offline TTS. The user has to use DestroyOfflineTts()
+// to free the returned pointer to avoid memory leak.
+SHERPA_ONNX_API SherpaOnnxOfflineTts *SherpaOnnxCreateOfflineTts(
+    const SherpaOnnxOfflineTtsConfig *config);
+
+// Free the pointer returned by CreateOfflineTts()
+SHERPA_ONNX_API void SherpaOnnxDestroyOfflineTts(SherpaOnnxOfflineTts *tts);
+
+// Generate audio from the given text and speaker id (sid).
+// The user has to use DestroyOfflineTtsGeneratedAudio() to free the returned
+// pointer to avoid memory leak.
+SHERPA_ONNX_API const SherpaOnnxGeneratedAudio *SherpaOnnxOfflineTtsGenerate(
+    const SherpaOnnxOfflineTts *tts, const char *text, int32_t sid,
+    float speed);
+
+SHERPA_ONNX_API void SherpaOnnxDestroyOfflineTtsGeneratedAudio(
+    const SherpaOnnxGeneratedAudio *p);
+
+// Write the generated audio to a wave file.
+// The saved wave file contains a single channel and has 16-bit samples.
+//
+// Return 1 if the write succeeded; return 0 on failure.
+SHERPA_ONNX_API int32_t SherpaOnnxWriteWave(const float *samples, int32_t n,
+                                            int32_t sample_rate,
+                                            const char *filename);
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 #ifdef __cplusplus
 } /* extern "C" */
