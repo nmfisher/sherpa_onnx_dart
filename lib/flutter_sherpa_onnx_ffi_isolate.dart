@@ -201,15 +201,18 @@ class FlutterSherpaOnnxFFIIsolateRunner {
     }
 
     var result = _lib.GetOnlineStreamResult(_recognizer!, _stream!);
+    var isEndpoint = _lib.IsEndpoint(_recognizer!, _stream!) == 1;
 
     if (result != nullptr) {
       if (result.ref.json != nullptr) {
-        _resultPort.send(result.ref.json.cast<Utf8>().toDartString());
+        var dartString = result.ref.json.cast<Utf8>().toDartString();
+        _resultPort.send(dartString.substring(0, dartString.length - 1) +
+            ", \"is_endpoint\":$isEndpoint}");
       }
       _lib.DestroyOnlineRecognizerResult(result);
     }
 
-    if (_lib.IsEndpoint(_recognizer!, _stream!) == 1) {
+    if (isEndpoint) {
       _lib.Reset(_recognizer!, _stream!);
     }
   }
