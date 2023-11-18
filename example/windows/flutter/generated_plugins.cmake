@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   flutter_ffi_asset_helper
-  flutter_onnx
   flutter_sherpa_onnx
   permission_handler_windows
   record_windows

@@ -15,7 +15,9 @@ dependencies:
     path: ../
   path_provider:
   mic_stream:
-    path: ../../mic_stream
+    git:
+      url: https://github.com/anarchuser/mic_stream
+    #path: ../../mic_stream
   permission_handler:
   just_audio: 
   cupertino_icons: ^1.0.2

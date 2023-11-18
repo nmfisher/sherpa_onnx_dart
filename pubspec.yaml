@@ -11,7 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_ffi_asset_helper:
-    path: ../flutter_ffi_asset_helper
+    git:
+      url: https://github.com/nmfisher/flutter_ffi_asset_helper
+    #path: ../flutter_ffi_asset_helper
   ffi:
   path_provider:
 
