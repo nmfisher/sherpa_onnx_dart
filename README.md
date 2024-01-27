@@ -29,10 +29,18 @@ Please note :
 1) make sure to run `git lfs pull` when you clone because the sherpa-onnx binaries libs are commited within the actual repository
 2) you will need to compile your own version of ONNXRuntime and place in the appropriate folders (you'll see some hardcoded paths/symbolic links in the Android src/main/jniLibs folder and the ios/flutter_sherpa_onnx.podspec, you may need to change these)
 
+- alternatively clone flutter_onnx into the parent_folder 
+- It should work right away for the example but won't work for any other model (e.g. one you train yourself from sherpa, or a different pretrained sherpa model)
+
 - clone : https://github.com/microsoft/onnxruntime
 
 - for ios, I see these files 
 - ...flutter_sherpa_onnx/ios/lib/ 
+
+
+Directory not found for option '-F/Users/mac/Desktop/flutter_sherpa_onnx/example/ios/Pods/../../flutter_onnx/ios/lib'
+
+
 
 - for android, I see the alias...
 android/src/main/jniLibs
@@ -45,7 +53,7 @@ android/src/main/jniLibs
 
 - check out the example app (which uses a Chinese model) and try and get that running as-is first, before trying to incorporate it into your own project.
 
-There's zero documentation but here is how to :
+Here is how to :
 
 1) create an instance of FlutterSherpaOnnxFFI 
 2) call createRecognizer with the sample rate, chunk length (which is basically how much audio you want to process at any one time, usually 0.1 is fine (100ms)) and the asset paths to your sherpa-onnx files
