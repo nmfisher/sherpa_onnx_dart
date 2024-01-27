@@ -59,7 +59,7 @@ SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_ffi_asset_helper: 04c62c1f6b69cce610647d154ddbcd6fe7bec59c
-  flutter_sherpa_onnx: 52fd3dc417858736da00fae5356f760c7f5e1772
+  flutter_sherpa_onnx: 9da3ad5b98927ffdabe18103bc591269da17f733
   integration_test: 13825b8a9334a850581300559b8839134b124670
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   mic_stream: 28787bfcfcfc68e17fad15050baf5929f1d10901
