@@ -48,7 +48,7 @@ class SherpaOnnx {
               ? null
               : resultMap["start_time"] + resultMap["timestamps"][i + 1]));
     }
-    final text = words.map((w) => w.word).join(" ");
+    final text = resultMap["text"];
     return ASRResult(isFinal, words, text);
   }
 
