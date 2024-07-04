@@ -1,6 +1,8 @@
 // Copyright (c) 2023, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+import 'dart:io';
+
 import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_toolchain_c/native_toolchain_c.dart';
@@ -9,11 +11,14 @@ void main(List<String> args) async {
   await build(args, (config, output) async {
     var platform = config.targetOS.toString().toLowerCase();
     var onnxDir = "${config.packageRoot.path}/onnxruntime_prebuilt";
-    var onnxLibDir = "$onnxDir/lib/$platform";
+    var onnxLibDir = "$onnxDir/lib/$platform/";
     var libDir = "${config.packageRoot.toFilePath()}/native/lib/$platform/";
-    
-    if(platform == "macos") { 
-        onnxLibDir += "/dynamic";
+
+    if (platform == "macos") {
+      onnxLibDir += "dynamic/";
+    } else if (platform == "android") {
+      libDir += "arm64-v8a/";
+      onnxLibDir += "arm64-v8a/";
     }
 
     final packageName = config.packageName;
@@ -28,12 +33,14 @@ void main(List<String> args) async {
       includes: ['native/include', '$onnxDir/include'],
       flags: [
         '-std=c++17',
-        "-F$onnxLibDir",
-        '-framework',
-        'onnxruntime',
-        '-framework',
-        'Foundation',
-        if(platform == "ios")
+        if (platform == "ios" || platform == "macos") ...[
+          "-F$onnxLibDir",
+          '-framework',
+          'onnxruntime',
+          '-framework',
+          'Foundation',
+        ],
+        if (platform == "ios")
         "-mios-version-min=8.0",
         "-lkaldi-decoder-core",
         "-lsherpa-onnx-fst",
@@ -65,5 +72,57 @@ void main(List<String> args) async {
         ..level = Level.ALL
         ..onRecord.listen((record) => print(record.message)),
     );
+
+    if (config.targetOS == OS.android) {
+      if (!config.dryRun) {
+        final archExtension = switch (config.targetArchitecture) {
+          Architecture.arm => "arm-linux-androideabi",
+          Architecture.arm64 => "aarch64-linux-android",
+          Architecture.x64 => "x86_64-linux-android",
+          Architecture.ia32 => "i686-linux-android",
+          _ => throw FormatException('Invalid')
+        };
+        var ndkRoot = File(config.cCompiler.compiler!.path).parent.parent.path;
+        var stlPath =
+            File("$ndkRoot/sysroot/usr/lib/${archExtension}/libc++_shared.so");
+        output.addAsset(NativeCodeAsset(
+            package: "sherpa_onnx_dart",
+            name: "libc++_shared.so",
+            linkMode: DynamicLoadingBundled(),
+            os: config.targetOS,
+            file: stlPath.uri,
+            architecture: config.targetArchitecture));
+        for (final file in [
+          "kaldi-decoder-core",
+          "kaldi-native-fbank-core",
+          "sherpa-onnx-c-api",
+          "sherpa-onnx-fst",
+          "sherpa-onnx-kaldifst-core",
+          "sherpa-onnx-core"
+        ]) {
+          output.addAsset(NativeCodeAsset(
+              package: "sherpa_onnx_dart",
+              name: "lib${file}.so",
+              linkMode: DynamicLoadingBundled(),
+              os: config.targetOS,
+              file: File("$libDir/lib${file}.so").uri,
+              architecture: config.targetArchitecture));
+        }
+        output.addAsset(NativeCodeAsset(
+            package: "sherpa_onnx_dart",
+            name: "libonnxruntime.so",
+            linkMode: DynamicLoadingBundled(),
+            os: config.targetOS,
+            file: File("$onnxLibDir/libonnxruntime.so").uri,
+            architecture: config.targetArchitecture));
+        output.addAsset(NativeCodeAsset(
+            package: "sherpa_onnx_dart",
+            name: "libcustom_op_library.so",
+            linkMode: DynamicLoadingBundled(),
+            os: config.targetOS,
+            file: File("$onnxLibDir/libcustom_op_library.so").uri,
+            architecture: config.targetArchitecture));
+      }
+    }
   });
 }
