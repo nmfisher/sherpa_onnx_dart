@@ -1,0 +1,12 @@
+ios/lib/onnxruntime.framework/Headers/coreml_provider_factory.h filter=lfs diff=lfs merge=lfs -text
+ios/lib/onnxruntime.framework/Headers/onnxruntime_c_api.h filter=lfs diff=lfs merge=lfs -text
+ios/lib/onnxruntime.framework/Headers/onnxruntime_cxx_api.h filter=lfs diff=lfs merge=lfs -text
+ios/lib/onnxruntime.framework/Headers/onnxruntime_cxx_inline.h filter=lfs diff=lfs merge=lfs -text
+ios/lib/onnxruntime.framework/onnxruntime filter=lfs diff=lfs merge=lfs -text
+ios/lib/onnxruntime.framework filter=lfs diff=lfs merge=lfs -text
+ios/lib/onnxruntime.framework/Headers filter=lfs diff=lfs merge=lfs -text
+ios/lib/onnxruntime.framework/Headers/cpu_provider_factory.h filter=lfs diff=lfs merge=lfs -text
+ios/lib/onnxruntime.framework/Info.plist filter=lfs diff=lfs merge=lfs -text
+macos/lib/**/* filter=lfs diff=lfs merge=lfs -text
+ filter=lfs diff=lfs merge=lfs -text
+macos/lib/*.* filter=lfs diff=lfs merge=lfs -text
