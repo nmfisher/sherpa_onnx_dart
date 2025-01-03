@@ -1,0 +1,48 @@
+PODS:
+  - audio_session (0.0.1):
+    - FlutterMacOS
+  - flutter_ffi_asset_helper (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+  - just_audio (0.0.1):
+    - FlutterMacOS
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - record_darwin (1.0.0):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - audio_session (from `Flutter/ephemeral/.symlinks/plugins/audio_session/macos`)
+  - flutter_ffi_asset_helper (from `Flutter/ephemeral/.symlinks/plugins/flutter_ffi_asset_helper/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - just_audio (from `Flutter/ephemeral/.symlinks/plugins/just_audio/macos`)
+  - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
+  - record_darwin (from `Flutter/ephemeral/.symlinks/plugins/record_darwin/macos`)
+
+EXTERNAL SOURCES:
+  audio_session:
+    :path: Flutter/ephemeral/.symlinks/plugins/audio_session/macos
+  flutter_ffi_asset_helper:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_ffi_asset_helper/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  just_audio:
+    :path: Flutter/ephemeral/.symlinks/plugins/just_audio/macos
+  path_provider_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
+  record_darwin:
+    :path: Flutter/ephemeral/.symlinks/plugins/record_darwin/macos
+
+SPEC CHECKSUMS:
+  audio_session: dea1f41890dbf1718f04a56f1d6150fd50039b72
+  flutter_ffi_asset_helper: 6dfb0a7bf41687bf86915b67bb13c39d0080f409
+  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
+  just_audio: 9b67ca7b97c61cfc9784ea23cd8cc55eb226d489
+  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  record_darwin: df0a677188e5fed18472550298e675f19ddaffbe
+
+PODFILE CHECKSUM: 1888651be91a8ad58692c1add9ce24279fd4e950
+
+COCOAPODS: 1.15.2

@@ -1,0 +1,38 @@
+name: sherpa_onnx_dart
+description: A Dart package wrapping the sherpa-onnx speech recognition library.
+version: 0.0.1
+
+environment:
+  sdk: ^3.5.0
+
+# Add regular dependencies here.
+dependencies:
+  shared_asr_utils: ^0.0.1
+  native_assets_cli: ^0.6.0
+  native_toolchain_c: ^0.4.2
+  record: ^5.1.2
+  ffi: ^2.1.3
+  ffigen: ^15.0.0
+  fftea: ^1.5.0+1
+
+dev_dependencies:
+  archive: ^4.0.2
+  lints: ^3.0.0
+  test: ^1.24.0
+
+ffigen:
+  output: 'lib/src/sherpa_onnx_dart.g.dart'
+  headers:
+    entry-points:
+      - 'native/include/c-api.h'
+      - 'native/include/extras.h'
+    include-directives:
+      - 'native/include/c-api.h'
+      - 'native/include/extras.h'
+  ffi-native:
+    assetId: package:sherpa_onnx_dart/sherpa_onnx_dart.dart
+  functions:
+    leaf:
+      include:
+      - '.*'
+
